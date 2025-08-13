@@ -15,7 +15,7 @@ public class App {
             App sorter = new App();
             long start = System.currentTimeMillis();
             List<Integer> sorted = sorter.mergeSort(arr);
-            long maxVal = sorter.maxVal1(arr.stream().mapToLong(Integer::longValue).toArray(), arr.size());
+            long maxVal = sorter.maxVal2(arr.stream().mapToLong(Integer::longValue).toArray(), 0, arr.size() - 1);
             long end = System.currentTimeMillis();
             System.out.println("Tamanho: " + size);
             System.out.println("Iterações: " + sorter.iterations);
@@ -87,4 +87,14 @@ public class App {
        }
        return max;
    }
+   public long maxVal2(long A[], int init, int end) {
+    if (end - init <= 1)
+        return Math.max(A[init], A[end]);
+    else {
+          int m = (init + end)/2;
+          long v1 = maxVal2(A,init,m);
+          long v2 = maxVal2(A,m+1,end);
+          return Math.max(v1,v2);
+         }
+}  
 }
