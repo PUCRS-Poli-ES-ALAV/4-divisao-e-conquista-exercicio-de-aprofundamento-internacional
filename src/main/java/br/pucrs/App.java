@@ -1,32 +1,48 @@
 package br.pucrs;
 
 import java.util.List;
+public class App {
+    private long iterations = 0;
 
-/**
- * Hello world!
- *
- */
-public class App 
-{
-    public static void main( String[] args )
-    {
-        // Gerar lista de inteiros aleatórios pequenos
-        int size = 10;
-        List<Integer> arr = new java.util.ArrayList<>();
-        java.util.Random rand = new java.util.Random();
-        for (int i = 0; i < size; i++) {
-            arr.add(rand.nextInt(100)); // Números entre 0 e 99
+    public static void main(String[] args) {
+        int[] sizes = { 32, 2048, 1048576 };
+        for (int size : sizes) {
+            List<Integer> arr = new java.util.ArrayList<>();
+            java.util.Random rand = new java.util.Random();
+            for (int i = 0; i < size; i++) {
+                arr.add(rand.nextInt(1000000)); 
+            }
+            App sorter = new App();
+            long start = System.currentTimeMillis();
+            List<Integer> sorted = sorter.mergeSort(arr);
+            long maxVal = sorter.maxVal1(arr.stream().mapToLong(Integer::longValue).toArray(), arr.size());
+            long end = System.currentTimeMillis();
+            System.out.println("Tamanho: " + size);
+            System.out.println("Iterações: " + sorter.iterations);
+            System.out.println("Tempo (ms): " + (end - start));
+            if (size <= 32) {
+                System.out.println("Original: " + arr);
+                System.out.println("Sorted:   " + sorted);
+            }
+            System.out.println("--------------------------");
+
+            System.out.println("----------------- Sem Recursão! ------------------");
+            System.out.println("Tamanho: " + size);
+            System.out.println("Máximo valor: " + maxVal);
+            System.out.println("Tempo (ms): " + (end - start));
+            if (size <= 32) {
+                System.out.println("Original: " + arr);
+                System.out.println("Sorted:   " + sorted);
+            }
+            System.out.println("--------------------------");
         }
-
-        System.out.println("Original: " + arr);
-        List<Integer> sorted = new App().mergeSort(arr);
-        System.out.println("Sorted: " + sorted);
     }
 
-    public List<Integer> merge(List<Integer> a, List<Integer> b){
+    public List<Integer> merge(List<Integer> a, List<Integer> b) {
         List<Integer> res = new java.util.ArrayList<>();
         int i = 0, j = 0;
         while (i < a.size() && j < b.size()) {
+            iterations++;
             if (a.get(i) <= b.get(j)) {
                 res.add(a.get(i));
                 i++;
@@ -36,26 +52,39 @@ public class App
             }
         }
         while (i < a.size()) {
+            iterations++;
             res.add(a.get(i));
             i++;
         }
         while (j < b.size()) {
+            iterations++;
             res.add(b.get(j));
             j++;
         }
         return res;
     }
-    public List<Integer> mergeSort(List<Integer> arr){
-        if(arr.size()==1){
+
+    public List<Integer> mergeSort(List<Integer> arr) {
+        if (arr.size() == 1) {
             return arr;
         }
-        int half = arr.size()/2;
+        int half = arr.size() / 2;
         List<Integer> a = arr.subList(0, half);
         List<Integer> b = arr.subList(half, arr.size());
-
         a = mergeSort(a);
         b = mergeSort(b);
         arr = merge(a, b);
         return arr;
     }
+
+   public long maxVal1(long[] A, int n) {
+       long max = A[0];
+       for (int i = 1; i < n; i++) {
+           iterations++;
+           if (A[i] > max) {
+               max = A[i];
+           }
+       }
+       return max;
+   }
 }
